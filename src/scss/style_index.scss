@@ -1,14 +1,5 @@
+@import 'variables/colors.scss';
 @import 'https://fonts.googleapis.com/css?family=Roboto:300,400,500';
-
-
-    // https://coolors.co/9b1d20-ff4e00-8ea604-f5bb00-353030
-$red: #9b1d20;
-$orange: #ff4e00;
-$green: #8ea604;
-$yellow: #f5bb00;
-$black: #353030;
-$white: #FFF;
-
 
 body {
     line-height: 1.5;
@@ -20,7 +11,7 @@ body {
 }
 
 a {
-    color: $red;
+    color: $orange;
 }
 
 main {
@@ -79,25 +70,48 @@ header {
     margin-top: 1.7em;
 }
 
-.sign-up-button {
+.button {
+    @mixin button-color($color) {
+        background: $color;
+        border-color: darken($color, 10%);
+        
+        &:hover {
+            background: lighten($color, 2%);
+        }
+        
+        &:active {
+            background: lighten($color, 2%);
+        }
+    }
+    
     display: inline-block;
-    background: $green;
-    border: 0px solid darken($green, 10%);
+    border: 0 solid;
     border-bottom-width: 5px;
     color: $white;
     text-decoration: none;
     padding: 0.9em 1.4em 0.8em;
     border-radius: 3px;
+    font: inherit;
+    @include button-color($black);
     
     &:hover {
         margin-top: 1px;
         border-bottom-width: 4px;
-        background: lighten($green, 2%);
     }
     
     &:active {
         margin-top: 3px;
         border-bottom-width: 2px;
-        background: lighten($green, 2%);
+    }
+    
+    &:focus {
+        outline: none;
+    }
+    
+    &.green {
+        @include button-color($green);
+    }
+    &.yellow {
+        @include button-color($yellow);
     }
 }

@@ -1,0 +1,39 @@
+@import 'variables/colors.scss';
+
+* {
+    box-sizing: border-box;
+}
+
+form {
+}
+
+input {
+    border: 0;
+    border-bottom: 2px solid $yellow;
+    display: block;
+    width: 100%;
+    padding: 0.4em 0em 0.4em;
+    font-size: 1em;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 1.85em, $yellow 1.85em) 0 0 / 0% 100% no-repeat;
+    transition: 0.3s background-size;
+    
+    &:focus {
+        outline: none;
+        background-size: 100% 100%;
+    }
+    
+    &::after {
+        content: '';
+        display: block;
+    }
+}
+
+label {
+    display: block;
+    color: $yellow;
+    font-size: 0.8em;
+}
+
+p.error {
+    color: $red;
+}

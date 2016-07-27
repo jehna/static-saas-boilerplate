@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         jshint: {
-            all: ['Gruntfile.js', 'src/js/**']
+            all: ['Gruntfile.js'/*, 'src/js/**'*/]
         },
         watch: {
             scripts: {
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
                 }
             },
             html: {
-                files: ['src/*.html'],
+                files: ['src/*.html', 'src/**/*.html'],
                 tasks: ['build:html'],
                 options: {
                     spawn: false
@@ -36,20 +36,11 @@ module.exports = function(grunt) {
             }
         },
         copy: {
-            scripts: {
-                files: [{
-                    expand: true,
-                    cwd: 'src/',
-                    src: ['js/**'],
-                    dest: 'dist/',
-                    filter: 'isFile'
-                }]
-            },
             html: {
                 files: [{
                     expand: true,
                     cwd: 'src/',
-                    src: ['*.html'],
+                    src: ['*.html', '**/*.html'],
                     dest: 'dist/',
                     filter: 'isFile'
                 }]
@@ -104,6 +95,27 @@ module.exports = function(grunt) {
                     dest: 'dist/img/'
                 }]
             }
+        },
+        babel: {
+            options: {
+                sourceMap: true,
+                presets: ['babel-preset-react', 'babel-preset-es2015']
+            },
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/js/',
+                    src: ['**.js', '**/*.js'],
+                    dest: 'tmp/js/'
+                }]
+            }
+        },
+        browserify: {
+            dist: {
+                files: {
+                    'dist/js/app.js': 'tmp/js/app.js'
+                }
+            }
         }
     });
     
@@ -113,10 +125,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-babel');
     grunt.loadNpmTasks('grunt-open');
     
     grunt.registerTask('build', ['build:scripts', 'build:styles', 'build:html', 'build:img']);
-    grunt.registerTask('build:scripts', ['jshint', 'copy:scripts']);
+    grunt.registerTask('build:scripts', ['jshint', 'babel', 'browserify']);
     grunt.registerTask('build:styles', ['sass']);
     grunt.registerTask('build:html', ['copy:html']);
     grunt.registerTask('build:img', ['imagemin:light']);
