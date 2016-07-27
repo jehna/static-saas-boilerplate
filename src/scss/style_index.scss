@@ -1,0 +1,103 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto:300,400,500';
+
+
+    // https://coolors.co/9b1d20-ff4e00-8ea604-f5bb00-353030
+$red: #9b1d20;
+$orange: #ff4e00;
+$green: #8ea604;
+$yellow: #f5bb00;
+$black: #353030;
+$white: #FFF;
+
+
+body {
+    line-height: 1.5;
+    background: white;
+    color: lighten($black, 25%);
+    -webkit-font-smoothing: antialiased;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    margin: 0;
+}
+
+a {
+    color: $red;
+}
+
+main {
+    margin: 0 auto;
+    max-width: 50em;
+    padding: 4em 1em;
+}
+
+h2 {
+    margin-top: 1em;
+    padding-top: 1em;
+}
+
+img {
+    height: auto;
+    max-width: 100%;
+}
+
+h1,
+h2,
+strong {
+    color: $black;
+}
+
+header {
+    background: transparentize($black, 0.6);
+    color: white;
+    line-height: 1.2;
+    max-width: none;
+    padding: 10vw 2em;
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+    
+    h1 {
+        font-size: 2.5em;
+        font-weight: 300;
+        color: inherit;
+    }
+    
+    &::before {
+        content: '';
+        display: block;
+        z-index: -1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('/img/hero-image.jpg') 50% 50%/cover no-repeat;
+    }
+}
+
+.signup {
+    text-align: center;
+    margin-top: 1.7em;
+}
+
+.sign-up-button {
+    display: inline-block;
+    background: $green;
+    border: 0px solid darken($green, 10%);
+    border-bottom-width: 5px;
+    color: $white;
+    text-decoration: none;
+    padding: 0.9em 1.4em 0.8em;
+    border-radius: 3px;
+    
+    &:hover {
+        margin-top: 1px;
+        border-bottom-width: 4px;
+        background: lighten($green, 2%);
+    }
+    
+    &:active {
+        margin-top: 3px;
+        border-bottom-width: 2px;
+        background: lighten($green, 2%);
+    }
+}
