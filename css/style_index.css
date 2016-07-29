@@ -1,0 +1,106 @@
+@import "https://fonts.googleapis.com/css?family=Roboto:300,400,500";
+body {
+  line-height: 1.5;
+  background: white;
+  color: #786d6d;
+  -webkit-font-smoothing: antialiased;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  margin: 0; }
+
+a {
+  color: #ff4e00; }
+
+main {
+  margin: 0 auto;
+  max-width: 50em;
+  padding: 4em 1em; }
+
+h2 {
+  margin-top: 1em;
+  padding-top: 1em; }
+
+img {
+  height: auto;
+  max-width: 100%; }
+
+h1,
+h2,
+strong {
+  color: #353030; }
+
+header {
+  background: rgba(53, 48, 48, 0.4);
+  color: white;
+  line-height: 1.2;
+  max-width: none;
+  padding: 10vw 2em;
+  text-align: center;
+  margin: 0 auto;
+  position: relative; }
+  header h1 {
+    font-size: 2.5em;
+    font-weight: 300;
+    color: inherit; }
+  header::before {
+    content: '';
+    display: block;
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("/img/hero-image.jpg") 50% 50%/cover no-repeat; }
+
+.signup {
+  text-align: center;
+  margin-top: 1.7em; }
+
+.login-top-right {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  margin: 0; }
+
+.button {
+  display: inline-block;
+  border: 0 solid;
+  border-bottom-width: 0.35em;
+  color: #FFF;
+  text-decoration: none;
+  padding: 0.9em 1.4em 0.8em;
+  border-radius: 3px;
+  font: inherit;
+  background: #353030;
+  border-color: #1a1818; }
+  .button:hover {
+    background: #3a3535; }
+  .button:active {
+    background: #3a3535; }
+  .button:hover {
+    margin-top: 0.0625em;
+    border-bottom-width: 0.25em; }
+  .button:active {
+    margin-top: 0.1875em;
+    border-bottom-width: 0.15em; }
+  .button:focus {
+    outline: none; }
+  .button.green {
+    background: #8ea604;
+    border-color: #637403; }
+    .button.green:hover {
+      background: #97b004; }
+    .button.green:active {
+      background: #97b004; }
+  .button.yellow {
+    background: #f5bb00;
+    border-color: #c29400; }
+    .button.yellow:hover {
+      background: #ffc300; }
+    .button.yellow:active {
+      background: #ffc300; }
+  .button.small {
+    padding: 0.6em 1.1em 0.5em;
+    font-size: 0.89em; }
+
+/*# sourceMappingURL=style_index.css.map */

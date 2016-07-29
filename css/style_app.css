@@ -1,0 +1,45 @@
+* {
+  box-sizing: border-box; }
+
+body,
+html {
+  min-height: 100%; }
+
+form {
+  max-width: 30em;
+  margin: 0 auto;
+  padding: 3em 3.5em 4em;
+  background: #FFF; }
+  form > *:first-child {
+    margin-top: 0; }
+
+input {
+  border: 0;
+  border-bottom: 2px solid #f5bb00;
+  display: block;
+  width: 100%;
+  padding: 0.4em 0em 0.4em;
+  font-size: 1em;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 1.85em, #f5bb00 1.85em) 0 0/0% 100% no-repeat;
+  transition: 0.3s background-size; }
+  input:focus {
+    outline: none;
+    background-size: 100% 100%; }
+  input::after {
+    content: '';
+    display: block; }
+
+label {
+  display: block;
+  color: #f5bb00;
+  font-size: 0.8em; }
+
+p.error {
+  color: #9b1d20; }
+p.success {
+  color: #8ea604; }
+
+body.login-bg {
+  background: url("/img/hero-image.jpg") 50% 50%/cover no-repeat; }
+
+/*# sourceMappingURL=style_app.css.map */
