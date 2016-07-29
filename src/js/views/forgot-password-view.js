@@ -6,37 +6,33 @@ var firebaseApp = require('../firebase-app.js');
 
 module.exports = React.createClass({
     getInitialState: function() {
-        return { email: '', password: '', isSending: false, showError: false };
+        return { email: '', isSending: false, showError: false, showSuccess: false };
     },
     handleEmailChange: function(e) {
         this.setState({ email: e.target.value });
-    },
-    handlePasswordChange: function(e) {
-        this.setState({ password: e.target.value });
     },
     handleSubmit: function(e) {
         e.preventDefault();
         this.setState({ showError: false });
         
         var email = this.state.email.trim();
-        var password = this.state.password;
-        if (!email || !password) {
+        if (!email) {
             // TODO: Error handling?
             return;
         }
         
-        Rx.Observable.just('Try signing in')
+        Rx.Observable.just('Try sending password reset')
             .tapOnNext(() => {
                 this.setState({ isSending: true, showError: false });
             })
             .flatMap(() => {
                 return Rx.Observable.fromPromise(
-                    firebaseAuth().signInWithEmailAndPassword(email, password)
+                    firebaseAuth().sendPasswordResetEmail(email)
                 );
             })
             .subscribe(
                 (x) => {
-                    document.location.hash = '#/login/';
+                    this.setState({ isSending: false, showSuccess: true });
                 },
                 (err) => {
                     this.setState({ isSending: false, showError: true });
@@ -48,6 +44,7 @@ module.exports = React.createClass({
     render: function() {
         return (
             <form onSubmit={ this.handleSubmit }>
+                <h2>Password reset</h2>
                 <p>
                     <label htmlFor="email">Email address</label>
                     <input
@@ -59,24 +56,15 @@ module.exports = React.createClass({
                         onChange={ this.handleEmailChange }
                     />
                 </p>
-                <p>
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        value={ this.state.password }
-                        onChange={ this.handlePasswordChange }
-                    />
-                </p>
                 { this.state.showError &&
-                    <p className="error">{ `Email and password didn't match` }</p>
+                    <p className="error">{ `There is no user with this email` }</p>
+                }
+                { this.state.showSuccess &&
+                    <p className="success">{ `Password reset link sent to your email` }</p>
                 }
                 <p>
-                    <Button color="yellow" type="submit" disabled={ this.state.isSending }>Log in!</Button>
+                    <Button color="yellow" type="submit" disabled={ this.state.isSending }>Send password reset email</Button>
                 </p>
-                <a href="/app/#/forgot-password/">Forgot password?</a><br />
-                <a href="/app/#/create-account/">Create an account</a>
             </form>
         )
     }

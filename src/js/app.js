@@ -3,6 +3,9 @@ var ReactDOM = require('react-dom');
 var Rx = require('rx');
 var LoginView = require('./views/login-view.js');
 var CreateAccountView = require('./views/create-account-view.js');
+var ForgotPasswordView = require('./views/forgot-password-view.js');
+var ResetPasswordView = require('./views/reset-password-view.js');
+var URL = require('url-parse');
 var fireabse = require('firebase/app');
 
 var RedirectView = React.createClass({
@@ -53,22 +56,27 @@ Rx.Observable.just('Routing')
     })
     .map(() => document.location.hash || '' )
     .map((hash) => {
+        var url = new URL(hash.substr(1) || '/');
         if (fireabse.auth().currentUser) {
             // User has logged in
-            switch(hash.substr(2)) {
-                case 'sign-out/':
+            switch(url.pathname) {
+                case '/sign-out/':
                     return <SignOutView />
-                case '':
+                case '/':
                     return <LoggedInView />;
                 default:
                     return <RedirectView to='#/' />
             }
         } else {
             // User has NOT logged in
-            switch(hash.substr(2)) {
-                case 'create-account/':
+            switch(url.pathname) {
+                case '/create-account/':
                     return <CreateAccountView />;
-                case '':
+                case '/forgot-password/':
+                    return <ForgotPasswordView />;
+                case '/reset-password/':
+                    return <ResetPasswordView />;
+                case '/':
                     return <LoginView />;
                 default:
                     return <RedirectView to='#/' />
