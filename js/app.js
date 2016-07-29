@@ -33828,7 +33828,7 @@ var CreateAccountView = React.createClass({
             ),
             React.createElement(
                 'a',
-                { href: '/app/#/' },
+                { href: '#/' },
                 'Log in'
             ),
             React.createElement('br', null)
@@ -34031,13 +34031,13 @@ module.exports = React.createClass({
             ),
             React.createElement(
                 'a',
-                { href: '/app/#/forgot-password/' },
+                { href: '#/forgot-password/' },
                 'Forgot password?'
             ),
             React.createElement('br', null),
             React.createElement(
                 'a',
-                { href: '/app/#/create-account/' },
+                { href: '#/create-account/' },
                 'Create an account'
             )
         );
