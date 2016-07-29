@@ -70,6 +70,13 @@ header {
     margin-top: 1.7em;
 }
 
+.login-top-right {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    margin: 0;
+}
+
 .button {
     @mixin button-color($color) {
         background: $color;
@@ -86,7 +93,7 @@ header {
     
     display: inline-block;
     border: 0 solid;
-    border-bottom-width: 5px;
+    border-bottom-width: 0.35em;
     color: $white;
     text-decoration: none;
     padding: 0.9em 1.4em 0.8em;
@@ -95,13 +102,13 @@ header {
     @include button-color($black);
     
     &:hover {
-        margin-top: 1px;
-        border-bottom-width: 4px;
+        margin-top: 0.0625em;
+        border-bottom-width: 0.25em;
     }
     
     &:active {
-        margin-top: 3px;
-        border-bottom-width: 2px;
+        margin-top: 0.1875em;
+        border-bottom-width: 0.15em;
     }
     
     &:focus {
@@ -113,5 +120,9 @@ header {
     }
     &.yellow {
         @include button-color($yellow);
+    }
+    &.small {
+        padding: 0.6em 1.1em 0.5em;
+        font-size: 0.89em;
     }
 }
