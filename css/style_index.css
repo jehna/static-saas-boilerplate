@@ -50,7 +50,7 @@ header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url("/img/hero-image.jpg") 50% 50%/cover no-repeat; }
+    background: url("../img/hero-image.jpg") 50% 50%/cover no-repeat; }
 
 .signup {
   text-align: center;

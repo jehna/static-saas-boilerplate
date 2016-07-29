@@ -40,6 +40,6 @@ p.success {
   color: #8ea604; }
 
 body.login-bg {
-  background: url("/img/hero-image.jpg") 50% 50%/cover no-repeat; }
+  background: url("../img/hero-image.jpg") 50% 50%/cover no-repeat; }
 
 /*# sourceMappingURL=style_app.css.map */
