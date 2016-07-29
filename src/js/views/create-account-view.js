@@ -31,6 +31,7 @@ var CreateAccountView = React.createClass({
         var password = this.state.password;
         var retypePassword = this.state.retypePassword;
         if (!email || !password) {
+            this.setState({ showError: `Email or password missing` });
             return;
         }
         
@@ -98,8 +99,9 @@ var CreateAccountView = React.createClass({
                     <p className="error">{ this.state.showError }</p>
                 }
                 <p>
-                    <Button color="yellow" type="submit" disabled={ this.state.isSending }>Create account</Button>
+                    <Button color="green" type="submit" disabled={ this.state.isSending }>Sign up for Free!</Button>
                 </p>
+                <a href="/app/#/">Log in</a><br />
             </form>
         );
     }

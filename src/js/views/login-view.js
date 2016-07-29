@@ -9,10 +9,10 @@ module.exports = React.createClass({
         return { email: '', password: '', isSending: false, showError: false };
     },
     handleEmailChange: function(e) {
-        this.setState({ email: e.target.value });
+        this.setState({ email: e.target.value, showError: false });
     },
     handlePasswordChange: function(e) {
-        this.setState({ password: e.target.value });
+        this.setState({ password: e.target.value, showError: false });
     },
     handleSubmit: function(e) {
         e.preventDefault();
@@ -21,7 +21,7 @@ module.exports = React.createClass({
         var email = this.state.email.trim();
         var password = this.state.password;
         if (!email || !password) {
-            // TODO: Error handling?
+            this.setState({ showError: 'Email or password missing' });
             return;
         }
         
@@ -39,7 +39,7 @@ module.exports = React.createClass({
                     document.location.hash = '#/login/';
                 },
                 (err) => {
-                    this.setState({ isSending: false, showError: true });
+                    this.setState({ isSending: false, showError: `Email and password didn't match` });
                 }
             );
         
@@ -48,6 +48,7 @@ module.exports = React.createClass({
     render: function() {
         return (
             <form onSubmit={ this.handleSubmit }>
+                <h2>Log in</h2>
                 <p>
                     <label htmlFor="email">Email address</label>
                     <input
@@ -70,7 +71,7 @@ module.exports = React.createClass({
                     />
                 </p>
                 { this.state.showError &&
-                    <p className="error">{ `Email and password didn't match` }</p>
+                    <p className="error">{ this.state.showError }</p>
                 }
                 <p>
                     <Button color="yellow" type="submit" disabled={ this.state.isSending }>Log in!</Button>

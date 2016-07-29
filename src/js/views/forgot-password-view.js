@@ -17,7 +17,7 @@ module.exports = React.createClass({
         
         var email = this.state.email.trim();
         if (!email) {
-            // TODO: Error handling?
+            this.setState({ showError: true });
             return;
         }
         
