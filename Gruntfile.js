@@ -116,6 +116,13 @@ module.exports = function(grunt) {
                     'dist/js/app.js': 'tmp/js/app.js'
                 }
             }
+        },
+        'gh-pages': {
+            options: {
+                base: 'dist',
+                currentRemote: 'github'
+            },
+            src: ['**']
         }
     });
     
@@ -126,6 +133,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-gh-pages');
     grunt.loadNpmTasks('grunt-babel');
     grunt.loadNpmTasks('grunt-open');
     
@@ -136,6 +144,6 @@ module.exports = function(grunt) {
     grunt.registerTask('build:img', ['imagemin:light']);
     grunt.registerTask('default', ['build', 'connect', 'open', 'watch']);
     
-    grunt.registerTask('deploy', ['build', 'build:deploy']);
+    grunt.registerTask('deploy', ['build', 'build:deploy', 'gh-pages']);
     grunt.registerTask('build:deploy', ['imagemin:hard']);
 };

@@ -5,6 +5,12 @@
 
 A static-site SaaS boilerplate that uses Firebase to handle the users.
 
+## See it live
+
+You can see this project live at:
+
+https://jehna.github.io/static-saas-boilerplate/
+
 ## Getting started
 
 ### Prerequisites

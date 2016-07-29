@@ -76,8 +76,8 @@ module.exports = React.createClass({
                 <p>
                     <Button color="yellow" type="submit" disabled={ this.state.isSending }>Log in!</Button>
                 </p>
-                <a href="/app/#/forgot-password/">Forgot password?</a><br />
-                <a href="/app/#/create-account/">Create an account</a>
+                <a href="#/forgot-password/">Forgot password?</a><br />
+                <a href="#/create-account/">Create an account</a>
             </form>
         )
     }

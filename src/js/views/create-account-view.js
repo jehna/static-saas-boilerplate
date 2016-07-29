@@ -101,7 +101,7 @@ var CreateAccountView = React.createClass({
                 <p>
                     <Button color="green" type="submit" disabled={ this.state.isSending }>Sign up for Free!</Button>
                 </p>
-                <a href="/app/#/">Log in</a><br />
+                <a href="#/">Log in</a><br />
             </form>
         );
     }

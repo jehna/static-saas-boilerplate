@@ -3,3 +3,4 @@ dist
 .sass-cache
 tmp
 src/js/firebase-keys-secret.js
+.grunt
