@@ -8,6 +8,8 @@ var ResetPasswordView = require('./views/reset-password-view.js');
 var URL = require('url-parse');
 var fireabse = require('firebase/app');
 
+var defaultTitle = document.title;
+
 var RedirectView = React.createClass({
     render: function() {
         document.location = this.props.to;
@@ -61,32 +63,41 @@ Rx.Observable.just('Routing')
             // User has logged in
             switch(url.pathname) {
                 case '/sign-out/':
-                    return <SignOutView />
+                    return [<SignOutView />, 'Sign out'];
                 case '/':
-                    return <LoggedInView />;
+                    return [<LoggedInView />];
                 default:
-                    return <RedirectView to='#/' />
+                    return [<RedirectView to='#/' />];
             }
         } else {
             // User has NOT logged in
             switch(url.pathname) {
                 case '/create-account/':
-                    return <CreateAccountView />;
+                    return [<CreateAccountView />, 'Create new account', 'login-bg'];
                 case '/forgot-password/':
-                    return <ForgotPasswordView />;
+                    return [<ForgotPasswordView />, 'Forgot password', 'login-bg'];
                 case '/reset-password/':
-                    return <ResetPasswordView />;
+                    return [<ResetPasswordView />, 'Reset password', 'login-bg'];
                 case '/':
-                    return <LoginView />;
+                    return [<LoginView />, 'Login', 'login-bg'];
                 default:
-                    return <RedirectView to='#/' />
+                    return [<RedirectView to='#/' />];
             }
         }
     })
-    .tapOnNext((view) => {
+    .tapOnNext(([view]) => {
+        // Render view
         ReactDOM.render(
             view,
             document.getElementsByTagName('main')[0]
         )
+    })
+    .tapOnNext(([view, title, customBodyClass]) => {
+        document.title = title ? `${title} - ${defaultTitle}` : defaultTitle;
+        
+        document.body.removeAttribute('class');
+        if (customBodyClass) {
+            document.body.classList.add(customBodyClass);
+        }
     })
     .subscribe();
