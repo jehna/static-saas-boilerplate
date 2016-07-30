@@ -10,33 +10,27 @@ var fireabse = require('firebase/app');
 
 var defaultTitle = document.title;
 
-var RedirectView = React.createClass({
-    render: function() {
-        document.location = this.props.to;
-        return (<p>Redirecting...</p>)
+const RedirectViewController = (to) => {
+    return () => {
+        document.location = to;
     }
-});
+};
 
-var SignOutView = React.createClass({
-    render: function() {
-        Rx.Observable.just('Sign out')
-            .flatMap(() => Rx.Observable.fromPromise(firebase.auth().signOut()))
-            .subscribe(() => { document.location = '#/'; });
-        
-        return (<p>Redirecting...</p>)
-    }
-});
+const SignOutViewController = () => {
+    Rx.Observable.just('Sign out')
+        .flatMap(() => Rx.Observable.fromPromise(firebase.auth().signOut()))
+        .subscribe(() => { document.location = '#/'; });
+}
 
-var LoggedInView = React.createClass({
-    render: function() {
-        return (
-            <div>
-                <p>Logged in as <em>{ firebase.auth().currentUser.email }</em>!</p>
-                <p><a href="#/sign-out/">Sign out</a></p>
-            </div>
-        )
-    }
-});
+const LoggedInViewController = ($container) => {
+    ReactDOM.render(
+        <div>
+            <p>Logged in as <em>{ firebase.auth().currentUser.email }</em>!</p>
+            <p><a href="#/sign-out/">Sign out</a></p>
+        </div>,
+        $container
+    );
+};
 
 
 
@@ -63,11 +57,11 @@ Rx.Observable.just('Routing')
             // User has logged in
             switch(url.pathname) {
                 case '/sign-out/':
-                    return [<SignOutView />, 'Sign out'];
+                    return [SignOutViewController, 'Sign out'];
                 case '/':
-                    return [<LoggedInView />];
+                    return [LoggedInViewController];
                 default:
-                    return [<RedirectView to='#/' />];
+                    return [RedirectViewController('#/')];
             }
         } else {
             // User has NOT logged in
@@ -81,7 +75,7 @@ Rx.Observable.just('Routing')
                 case '/':
                     return [LoginViewController, 'Login', 'login-bg'];
                 default:
-                    return [<RedirectView to='#/' />];
+                    return [RedirectViewController('#/')];
             }
         }
     })
@@ -89,7 +83,7 @@ Rx.Observable.just('Routing')
         // Render view
         viewController(document.getElementsByTagName('main')[0]);
     })
-    .tapOnNext(([view, title, customBodyClass]) => {
+    .tapOnNext(([vc, title, customBodyClass]) => {
         document.title = title ? `${title} - ${defaultTitle}` : defaultTitle;
         
         document.body.removeAttribute('class');
