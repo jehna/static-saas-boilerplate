@@ -2,11 +2,11 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Rx = require('rx');
 var LoginViewController = require('./view-controllers/login-view-controller.js');
-var CreateAccountView = require('./views/create-account-view.js');
+var CreateAccountViewController = require('./view-controllers/create-account-view-controller.js');
 var ForgotPasswordViewController = require('./view-controllers/forgot-password-view-controller.js');
 var ResetPasswordViewController = require('./view-controllers/reset-password-view-controller.js');
 var URL = require('url-parse');
-var fireabse = require('firebase/app');
+var fireabse = require('./firebase-app');
 
 var defaultTitle = document.title;
 
@@ -67,7 +67,7 @@ Rx.Observable.just('Routing')
             // User has NOT logged in
             switch(url.pathname) {
                 case '/create-account/':
-                    return [<CreateAccountView />, 'Create new account', 'login-bg'];
+                    return [CreateAccountViewController, 'Create new account', 'login-bg'];
                 case '/forgot-password/':
                     return [ForgotPasswordViewController, 'Forgot password', 'login-bg'];
                 case '/reset-password/':
