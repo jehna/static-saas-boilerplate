@@ -18,6 +18,15 @@ form {
     > *:first-child {
         margin-top: 0;
     }
+    
+    .footer-links {
+        a {
+            &:after {
+                display: block;
+                content: "";
+            }
+        }
+    }
 }
 
 input {

@@ -1,42 +1,36 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Rx = require('rx');
-var LoginView = require('./views/login-view.js');
-var CreateAccountView = require('./views/create-account-view.js');
-var ForgotPasswordView = require('./views/forgot-password-view.js');
-var ResetPasswordView = require('./views/reset-password-view.js');
+var LoginViewController = require('./view-controllers/login-view-controller.js');
+var CreateAccountViewController = require('./view-controllers/create-account-view-controller.js');
+var ForgotPasswordViewController = require('./view-controllers/forgot-password-view-controller.js');
+var ResetPasswordViewController = require('./view-controllers/reset-password-view-controller.js');
 var URL = require('url-parse');
-var fireabse = require('firebase/app');
+var fireabse = require('./firebase-app');
 
 var defaultTitle = document.title;
 
-var RedirectView = React.createClass({
-    render: function() {
-        document.location = this.props.to;
-        return (<p>Redirecting...</p>)
+const RedirectViewController = (to) => {
+    return () => {
+        document.location = to;
     }
-});
+};
 
-var SignOutView = React.createClass({
-    render: function() {
-        Rx.Observable.just('Sign out')
-            .flatMap(() => Rx.Observable.fromPromise(firebase.auth().signOut()))
-            .subscribe(() => { document.location = '#/'; });
-        
-        return (<p>Redirecting...</p>)
-    }
-});
+const SignOutViewController = () => {
+    Rx.Observable.just('Sign out')
+        .flatMap(() => Rx.Observable.fromPromise(firebase.auth().signOut()))
+        .subscribe(() => { document.location = '#/'; });
+}
 
-var LoggedInView = React.createClass({
-    render: function() {
-        return (
-            <div>
-                <p>Logged in as <em>{ firebase.auth().currentUser.email }</em>!</p>
-                <p><a href="#/sign-out/">Sign out</a></p>
-            </div>
-        )
-    }
-});
+const LoggedInViewController = ($container) => {
+    ReactDOM.render(
+        <div>
+            <p>Logged in as <em>{ firebase.auth().currentUser.email }</em>!</p>
+            <p><a href="#/sign-out/">Sign out</a></p>
+        </div>,
+        $container
+    );
+};
 
 
 
@@ -63,36 +57,33 @@ Rx.Observable.just('Routing')
             // User has logged in
             switch(url.pathname) {
                 case '/sign-out/':
-                    return [<SignOutView />, 'Sign out'];
+                    return [SignOutViewController, 'Sign out'];
                 case '/':
-                    return [<LoggedInView />];
+                    return [LoggedInViewController];
                 default:
-                    return [<RedirectView to='#/' />];
+                    return [RedirectViewController('#/')];
             }
         } else {
             // User has NOT logged in
             switch(url.pathname) {
                 case '/create-account/':
-                    return [<CreateAccountView />, 'Create new account', 'login-bg'];
+                    return [CreateAccountViewController, 'Create new account', 'login-bg'];
                 case '/forgot-password/':
-                    return [<ForgotPasswordView />, 'Forgot password', 'login-bg'];
+                    return [ForgotPasswordViewController, 'Forgot password', 'login-bg'];
                 case '/reset-password/':
-                    return [<ResetPasswordView />, 'Reset password', 'login-bg'];
+                    return [ResetPasswordViewController, 'Reset password', 'login-bg'];
                 case '/':
-                    return [<LoginView />, 'Login', 'login-bg'];
+                    return [LoginViewController, 'Login', 'login-bg'];
                 default:
-                    return [<RedirectView to='#/' />];
+                    return [RedirectViewController('#/')];
             }
         }
     })
-    .tapOnNext(([view]) => {
+    .tapOnNext(([viewController]) => {
         // Render view
-        ReactDOM.render(
-            view,
-            document.getElementsByTagName('main')[0]
-        )
+        viewController(document.getElementsByTagName('main')[0]);
     })
-    .tapOnNext(([view, title, customBodyClass]) => {
+    .tapOnNext(([vc, title, customBodyClass]) => {
         document.title = title ? `${title} - ${defaultTitle}` : defaultTitle;
         
         document.body.removeAttribute('class');
