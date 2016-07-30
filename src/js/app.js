@@ -4,7 +4,7 @@ var Rx = require('rx');
 var LoginViewController = require('./view-controllers/login-view-controller.js');
 var CreateAccountView = require('./views/create-account-view.js');
 var ForgotPasswordViewController = require('./view-controllers/forgot-password-view-controller.js');
-var ResetPasswordView = require('./views/reset-password-view.js');
+var ResetPasswordViewController = require('./view-controllers/reset-password-view-controller.js');
 var URL = require('url-parse');
 var fireabse = require('firebase/app');
 
@@ -71,7 +71,7 @@ Rx.Observable.just('Routing')
                 case '/forgot-password/':
                     return [ForgotPasswordViewController, 'Forgot password', 'login-bg'];
                 case '/reset-password/':
-                    return [<ResetPasswordView />, 'Reset password', 'login-bg'];
+                    return [ResetPasswordViewController, 'Reset password', 'login-bg'];
                 case '/':
                     return [LoginViewController, 'Login', 'login-bg'];
                 default:
