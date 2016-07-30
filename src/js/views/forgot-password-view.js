@@ -1,7 +1,4 @@
 var React = require('react');
-var Rx = require('rx');
-var firebaseAuth = require('firebase/auth');
-var firebaseApp = require('../firebase-app.js');
 var LoggedOutFormView = require('./logged-out-form-view.js');
 var FormEmailInput = require('../components/form-email-input.js');
 

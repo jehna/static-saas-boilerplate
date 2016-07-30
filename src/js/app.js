@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Rx = require('rx');
-var LoginView = require('./views/login-view.js');
+var LoginViewController = require('./view-controllers/login-view-controller.js');
 var CreateAccountView = require('./views/create-account-view.js');
 var ForgotPasswordViewController = require('./view-controllers/forgot-password-view-controller.js');
 var ResetPasswordView = require('./views/reset-password-view.js');
@@ -79,7 +79,7 @@ Rx.Observable.just('Routing')
                 case '/reset-password/':
                     return [<ResetPasswordView />, 'Reset password', 'login-bg'];
                 case '/':
-                    return [<LoginView />, 'Login', 'login-bg'];
+                    return [LoginViewController, 'Login', 'login-bg'];
                 default:
                     return [<RedirectView to='#/' />];
             }

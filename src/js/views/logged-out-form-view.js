@@ -17,6 +17,9 @@ const LoggedOutFormView = props => (
                 { props.submitButtonTitle }
             </Button>
         </p>
+        <p className='footer-links'>
+            { props.links }
+        </p>
     </form>
 );
 
