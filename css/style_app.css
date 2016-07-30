@@ -12,6 +12,9 @@ form {
   background: #FFF; }
   form > *:first-child {
     margin-top: 0; }
+  form .footer-links a:after {
+    display: block;
+    content: ""; }
 
 input {
   border: 0;

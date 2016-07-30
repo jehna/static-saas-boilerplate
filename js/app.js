@@ -33521,76 +33521,55 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Rx = require('rx');
-var LoginView = require('./views/login-view.js');
-var CreateAccountView = require('./views/create-account-view.js');
-var ForgotPasswordView = require('./views/forgot-password-view.js');
-var ResetPasswordView = require('./views/reset-password-view.js');
+var LoginViewController = require('./view-controllers/login-view-controller.js');
+var CreateAccountViewController = require('./view-controllers/create-account-view-controller.js');
+var ForgotPasswordViewController = require('./view-controllers/forgot-password-view-controller.js');
+var ResetPasswordViewController = require('./view-controllers/reset-password-view-controller.js');
 var URL = require('url-parse');
-var fireabse = require('firebase/app');
+var fireabse = require('./firebase-app');
 
 var defaultTitle = document.title;
 
-var RedirectView = React.createClass({
-    displayName: 'RedirectView',
+var RedirectViewController = function RedirectViewController(to) {
+    return function () {
+        document.location = to;
+    };
+};
 
-    render: function render() {
-        document.location = this.props.to;
-        return React.createElement(
+var SignOutViewController = function SignOutViewController() {
+    Rx.Observable.just('Sign out').flatMap(function () {
+        return Rx.Observable.fromPromise(firebase.auth().signOut());
+    }).subscribe(function () {
+        document.location = '#/';
+    });
+};
+
+var LoggedInViewController = function LoggedInViewController($container) {
+    ReactDOM.render(React.createElement(
+        'div',
+        null,
+        React.createElement(
             'p',
             null,
-            'Redirecting...'
-        );
-    }
-});
-
-var SignOutView = React.createClass({
-    displayName: 'SignOutView',
-
-    render: function render() {
-        Rx.Observable.just('Sign out').flatMap(function () {
-            return Rx.Observable.fromPromise(firebase.auth().signOut());
-        }).subscribe(function () {
-            document.location = '#/';
-        });
-
-        return React.createElement(
-            'p',
-            null,
-            'Redirecting...'
-        );
-    }
-});
-
-var LoggedInView = React.createClass({
-    displayName: 'LoggedInView',
-
-    render: function render() {
-        return React.createElement(
-            'div',
-            null,
+            'Logged in as ',
             React.createElement(
-                'p',
+                'em',
                 null,
-                'Logged in as ',
-                React.createElement(
-                    'em',
-                    null,
-                    firebase.auth().currentUser.email
-                ),
-                '!'
+                firebase.auth().currentUser.email
             ),
+            '!'
+        ),
+        React.createElement(
+            'p',
+            null,
             React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    'a',
-                    { href: '#/sign-out/' },
-                    'Sign out'
-                )
+                'a',
+                { href: '#/sign-out/' },
+                'Sign out'
             )
-        );
-    }
-});
+        )
+    ), $container);
+};
 
 Rx.Observable.just('Routing').flatMap(function () {
     // Initialization
@@ -33610,38 +33589,38 @@ Rx.Observable.just('Routing').flatMap(function () {
         // User has logged in
         switch (url.pathname) {
             case '/sign-out/':
-                return [React.createElement(SignOutView, null), 'Sign out'];
+                return [SignOutViewController, 'Sign out'];
             case '/':
-                return [React.createElement(LoggedInView, null)];
+                return [LoggedInViewController];
             default:
-                return [React.createElement(RedirectView, { to: '#/' })];
+                return [RedirectViewController('#/')];
         }
     } else {
         // User has NOT logged in
         switch (url.pathname) {
             case '/create-account/':
-                return [React.createElement(CreateAccountView, null), 'Create new account', 'login-bg'];
+                return [CreateAccountViewController, 'Create new account', 'login-bg'];
             case '/forgot-password/':
-                return [React.createElement(ForgotPasswordView, null), 'Forgot password', 'login-bg'];
+                return [ForgotPasswordViewController, 'Forgot password', 'login-bg'];
             case '/reset-password/':
-                return [React.createElement(ResetPasswordView, null), 'Reset password', 'login-bg'];
+                return [ResetPasswordViewController, 'Reset password', 'login-bg'];
             case '/':
-                return [React.createElement(LoginView, null), 'Login', 'login-bg'];
+                return [LoginViewController, 'Login', 'login-bg'];
             default:
-                return [React.createElement(RedirectView, { to: '#/' })];
+                return [RedirectViewController('#/')];
         }
     }
 }).tapOnNext(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 1);
 
-    var view = _ref2[0];
+    var viewController = _ref2[0];
 
     // Render view
-    ReactDOM.render(view, document.getElementsByTagName('main')[0]);
+    viewController(document.getElementsByTagName('main')[0]);
 }).tapOnNext(function (_ref3) {
     var _ref4 = _slicedToArray(_ref3, 3);
 
-    var view = _ref4[0];
+    var vc = _ref4[0];
     var title = _ref4[1];
     var customBodyClass = _ref4[2];
 
@@ -33654,27 +33633,91 @@ Rx.Observable.just('Routing').flatMap(function () {
 }).subscribe();
 
 
-},{"./views/create-account-view.js":185,"./views/forgot-password-view.js":186,"./views/login-view.js":187,"./views/reset-password-view.js":188,"firebase/app":1,"react":175,"react-dom":6,"rx":176,"url-parse":177}],182:[function(require,module,exports){
+},{"./firebase-app":186,"./view-controllers/create-account-view-controller.js":188,"./view-controllers/forgot-password-view-controller.js":189,"./view-controllers/login-view-controller.js":190,"./view-controllers/reset-password-view-controller.js":191,"react":175,"react-dom":6,"rx":176,"url-parse":177}],182:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
 
-var Button = React.createClass({
-    displayName: "Button",
-
-    render: function render() {
-        return React.createElement(
-            "button",
-            { className: "button " + this.props.color, type: this.props.type || "button", disabled: this.props.disabled },
-            this.props.children
-        );
-    }
-});
+var Button = function Button(props) {
+    return React.createElement(
+        "button",
+        {
+            className: "button " + props.color,
+            type: props.type || "button",
+            disabled: props.disabled },
+        props.children
+    );
+};
 
 module.exports = Button;
 
 
 },{"react":175}],183:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var FormInput = require('./form-input.js');
+
+var FormEmailInput = function FormEmailInput(props) {
+    return React.createElement(FormInput, {
+        label: props.label || "Email address",
+        id: props.id || "email",
+        type: 'email',
+        placeholder: props.placeholder || "john.doe@mailinator.com",
+        onChange: props.onChange
+    });
+};
+
+module.exports = FormEmailInput;
+
+
+},{"./form-input.js":184,"react":175}],184:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var Rx = require('rx');
+
+var FormInput = function FormInput(props) {
+    return React.createElement(
+        'p',
+        null,
+        React.createElement(
+            'label',
+            { htmlFor: props.id },
+            props.label
+        ),
+        React.createElement('input', {
+            type: props.type,
+            name: props.id,
+            id: props.id,
+            placeholder: props.placeholder,
+            onChange: props.onChange
+        })
+    );
+};
+
+module.exports = FormInput;
+
+
+},{"react":175,"rx":176}],185:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var FormInput = require('./form-input.js');
+
+var FormPasswordInput = function FormPasswordInput(props) {
+    return React.createElement(FormInput, {
+        label: props.label || "Password",
+        id: props.id || "password",
+        type: 'password',
+        onChange: props.onChange
+    });
+};
+
+module.exports = FormPasswordInput;
+
+
+},{"./form-input.js":184,"react":175}],186:[function(require,module,exports){
 'use strict';
 
 var secretFirebaseKeys = require('./firebase-keys-secret.js');
@@ -33684,7 +33727,7 @@ var app = firebase.initializeApp(secretFirebaseKeys);
 module.exports = app;
 
 
-},{"./firebase-keys-secret.js":184,"firebase/app":1}],184:[function(require,module,exports){
+},{"./firebase-keys-secret.js":187,"firebase/app":1}],187:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -33695,463 +33738,557 @@ module.exports = {
 };
 
 
-},{}],185:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
-var Button = require('../components/button.js');
+var ReactDOM = require('react-dom');
 var Rx = require('rx');
+var CreateAccountView = require('../views/create-account-view.js');
 var firebaseAuth = require('firebase/auth');
-var firebaseApp = require('../firebase-app.js');
 
-var CreateAccountView = React.createClass({
-    displayName: 'CreateAccountView',
+module.exports = function ($container) {
 
-    getInitialState: function getInitialState() {
-        return {
-            email: '',
-            password: '',
-            retypePassword: '',
-            isSending: false,
-            showError: false
-        };
-    },
-    handleEmailChange: function handleEmailChange(e) {
-        this.setState({ email: e.target.value });
-    },
-    handlePasswordChange: function handlePasswordChange(e) {
-        this.setState({ password: e.target.value });
-    },
-    handleRetypePasswordChange: function handleRetypePasswordChange(e) {
-        this.setState({ retypePassword: e.target.value });
-    },
-    handleSubmit: function handleSubmit(e) {
-        var _this = this;
+    var props = {
+        errorMessage: '',
+        email: '',
+        password: '',
+        retypePassword: ''
+    };
 
-        e.preventDefault();
-        this.setState({ showError: false });
+    var onSubmitSubject = new Rx.Subject();
+    var onEmailChangeSubject = new Rx.Subject();
+    var onPasswordChangeSubject = new Rx.Subject();
+    var onRetypePasswordChangeSubject = new Rx.Subject();
+    var onRenderSubject = new Rx.Subject();
 
-        var email = this.state.email.trim();
-        var password = this.state.password;
-        var retypePassword = this.state.retypePassword;
-        if (!email || !password) {
-            this.setState({ showError: 'Email or password missing' });
-            return;
-        }
-
-        if (password !== retypePassword) {
-            this.setState({ showError: 'Passwords don\'t match' });
-            return;
-        }
-
-        Rx.Observable.just('Create an account').tapOnNext(function () {
-            _this.setState({ isSending: true, showError: false });
-        }).flatMap(function () {
-            return Rx.Observable.fromPromise(firebaseAuth().createUserWithEmailAndPassword(email, password));
-        }).subscribe(function (x) {
-            document.location = '#/';
-        }, function (err) {
-            _this.setState({ isSending: false, showError: err.message });
+    var ForgotPasswordViewController = function ForgotPasswordViewController() {
+        return React.createElement(CreateAccountView, {
+            onSubmit: function onSubmit(e) {
+                return onSubmitSubject.onNext(e);
+            },
+            error: props.errorMessage,
+            onEmailChange: function onEmailChange(e) {
+                return onEmailChangeSubject.onNext(e);
+            },
+            onPasswordChange: function onPasswordChange(e) {
+                return onPasswordChangeSubject.onNext(e);
+            },
+            onRetypePasswordChange: function onRetypePasswordChange(e) {
+                return onRetypePasswordChangeSubject.onNext(e);
+            }
         });
-    },
-    render: function render() {
-        return React.createElement(
-            'form',
-            { onSubmit: this.handleSubmit },
-            React.createElement(
-                'h2',
-                null,
-                'Create an account'
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    'label',
-                    { htmlFor: 'email' },
-                    'Email address'
-                ),
-                React.createElement('input', {
-                    type: 'email',
-                    name: 'email',
-                    id: 'email',
-                    placeholder: 'john.doe@mailinator.com',
-                    value: this.state.email,
-                    onChange: this.handleEmailChange
-                })
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    'label',
-                    { htmlFor: 'password' },
-                    'Password'
-                ),
-                React.createElement('input', {
-                    type: 'password',
-                    name: 'password',
-                    id: 'password',
-                    value: this.state.password,
-                    onChange: this.handlePasswordChange
-                })
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    'label',
-                    { htmlFor: 'retype_password' },
-                    'Retype password'
-                ),
-                React.createElement('input', {
-                    type: 'password',
-                    name: 'retype_password',
-                    id: 'retype_password',
-                    value: this.state.retypePassword,
-                    onChange: this.handleRetypePasswordChange
-                })
-            ),
-            this.state.showError && React.createElement(
-                'p',
-                { className: 'error' },
-                this.state.showError
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    Button,
-                    { color: 'green', type: 'submit', disabled: this.state.isSending },
-                    'Sign up for Free!'
-                )
-            ),
-            React.createElement(
-                'a',
-                { href: '#/' },
-                'Log in'
-            ),
-            React.createElement('br', null)
-        );
-    }
-});
+    };
+
+    Rx.Observable.just('Render').flatMap(function () {
+        return Rx.Observable.merge([Rx.Observable.just('Initial load'), onRenderSubject]);
+    }).tapOnNext(function () {
+        ReactDOM.render(React.createElement(ForgotPasswordViewController, props), $container);
+    }).subscribe();
+
+    Rx.Observable.just('Email changed').flatMap(function () {
+        return onEmailChangeSubject;
+    }).tapOnNext(function (e) {
+        props.email = e.target.value.trim();
+    }).subscribe();
+
+    Rx.Observable.just('Password changed').flatMap(function () {
+        return onPasswordChangeSubject;
+    }).tapOnNext(function (e) {
+        props.password = e.target.value;
+    }).subscribe();
+
+    Rx.Observable.just('Retype password changed').flatMap(function () {
+        return onRetypePasswordChangeSubject;
+    }).tapOnNext(function (e) {
+        props.retypePassword = e.target.value;
+    }).subscribe();
+
+    Rx.Observable.just('Login form send').flatMap(function () {
+        return onSubmitSubject;
+    }).tapOnNext(function (event) {
+        event.preventDefault();
+    }).subscribe(function (values) {
+        Rx.Observable.just('Validate form and login').flatMap(function () {
+            return props.email && props.password ? Rx.Observable.just('Valid email and password') : Rx.Observable.throw(new Error('Email or password missing'));
+        }).flatMap(function () {
+            return props.password === props.retypePassword ? Rx.Observable.just('Passwords do match') : Rx.Observable.throw(new Error('Passwords do not match'));
+        }).tapOnNext(function () {
+            props.errorMessage = '';
+            onRenderSubject.onNext();
+        }).flatMap(function () {
+            return Rx.Observable.fromPromise(firebaseAuth().createUserWithEmailAndPassword(props.email, props.password));
+        }).subscribe(function () {
+            document.location.hash = '#/';
+        }, function (error) {
+            props.errorMessage = error.message;
+            onRenderSubject.onNext();
+        });
+    });
+};
+
+
+},{"../views/create-account-view.js":192,"firebase/auth":2,"react":175,"react-dom":6,"rx":176}],189:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Rx = require('rx');
+var ForgotPasswordView = require('../views/forgot-password-view.js');
+var firebaseAuth = require('firebase/auth');
+
+module.exports = function ($container) {
+
+    var props = {
+        errorMessage: '',
+        showSuccessMessage: false,
+        email: ''
+    };
+
+    var onSubmitSubject = new Rx.Subject();
+    var onEmailChangeSubject = new Rx.Subject();
+    var onRenderSubject = new Rx.Subject();
+
+    var ForgotPasswordViewController = function ForgotPasswordViewController() {
+        return React.createElement(ForgotPasswordView, {
+            onSubmit: function onSubmit(e) {
+                return onSubmitSubject.onNext(e);
+            },
+            error: props.errorMessage,
+            success: props.showSuccessMessage,
+            onEmailChange: function onEmailChange(e) {
+                return onEmailChangeSubject.onNext(e);
+            }
+        });
+    };
+
+    Rx.Observable.just('Render').flatMap(function () {
+        return Rx.Observable.merge([Rx.Observable.just('Initial load'), onRenderSubject]);
+    }).tapOnNext(function () {
+        ReactDOM.render(React.createElement(ForgotPasswordViewController, props), $container);
+    }).subscribe();
+
+    Rx.Observable.just('Email changed').flatMap(function () {
+        return onEmailChangeSubject;
+    }).tapOnNext(function (e) {
+        props.email = e.target.value;
+    }).subscribe();
+
+    Rx.Observable.just('Forgot Password form send').flatMap(function () {
+        return onSubmitSubject;
+    }).tapOnNext(function (event) {
+        event.preventDefault();
+        props.showSuccessMessage = false;
+    }).subscribe(function (values) {
+        Rx.Observable.just('Validate form and send email').flatMap(function () {
+            return props.email ? Rx.Observable.just('Valid email') : Rx.Observable.throw(new Error('No email'));
+        }).tapOnNext(function () {
+            props.errorMessage = '';
+            onRenderSubject.onNext();
+        }).flatMap(function () {
+            return Rx.Observable.fromPromise(firebaseAuth().sendPasswordResetEmail(props.email));
+        }).subscribe(function () {
+            props.showSuccessMessage = true;
+            onRenderSubject.onNext();
+        }, function (e) {
+            props.errorMessage = "There is no user with this email";
+            onRenderSubject.onNext();
+        });
+    });
+};
+
+
+},{"../views/forgot-password-view.js":193,"firebase/auth":2,"react":175,"react-dom":6,"rx":176}],190:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Rx = require('rx');
+var LoginView = require('../views/login-view.js');
+var firebaseAuth = require('firebase/auth');
+
+module.exports = function ($container) {
+
+    var props = {
+        errorMessage: '',
+        email: '',
+        password: ''
+    };
+
+    var onSubmitSubject = new Rx.Subject();
+    var onEmailChangeSubject = new Rx.Subject();
+    var onPasswordChangeSubject = new Rx.Subject();
+    var onRenderSubject = new Rx.Subject();
+
+    var ForgotPasswordViewController = function ForgotPasswordViewController() {
+        return React.createElement(LoginView, {
+            onSubmit: function onSubmit(e) {
+                return onSubmitSubject.onNext(e);
+            },
+            error: props.errorMessage,
+            onEmailChange: function onEmailChange(e) {
+                return onEmailChangeSubject.onNext(e);
+            },
+            onPasswordChange: function onPasswordChange(e) {
+                return onPasswordChangeSubject.onNext(e);
+            }
+        });
+    };
+
+    Rx.Observable.just('Render').flatMap(function () {
+        return Rx.Observable.merge([Rx.Observable.just('Initial load'), onRenderSubject]);
+    }).tapOnNext(function () {
+        ReactDOM.render(React.createElement(ForgotPasswordViewController, props), $container);
+    }).subscribe();
+
+    Rx.Observable.just('Email changed').flatMap(function () {
+        return onEmailChangeSubject;
+    }).tapOnNext(function (e) {
+        props.email = e.target.value.trim();
+    }).subscribe();
+
+    Rx.Observable.just('Password changed').flatMap(function () {
+        return onPasswordChangeSubject;
+    }).tapOnNext(function (e) {
+        props.password = e.target.value;
+    }).subscribe();
+
+    Rx.Observable.just('Login form send').flatMap(function () {
+        return onSubmitSubject;
+    }).tapOnNext(function (event) {
+        event.preventDefault();
+    }).subscribe(function (values) {
+        Rx.Observable.just('Validate form and login').flatMap(function () {
+            return props.email && props.password ? Rx.Observable.just('Valid email and password') : Rx.Observable.throw(new Error('Email or password missing'));
+        }).tapOnNext(function () {
+            props.errorMessage = '';
+            onRenderSubject.onNext();
+        }).flatMap(function () {
+            return Rx.Observable.fromPromise(firebaseAuth().signInWithEmailAndPassword(props.email, props.password));
+        }).subscribe(function () {
+            document.location.hash = '#/login/';
+        }, function (error) {
+            props.errorMessage = error.message;
+            onRenderSubject.onNext();
+        });
+    });
+};
+
+
+},{"../views/login-view.js":195,"firebase/auth":2,"react":175,"react-dom":6,"rx":176}],191:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Rx = require('rx');
+var URL = require('url-parse');
+var ResetPasswordView = require('../views/reset-password-view.js');
+var firebaseAuth = require('firebase/auth');
+
+module.exports = function ($container) {
+
+    var url = new URL(window.location.hash.substr(1), true);
+
+    var props = {
+        oobCode: url.query.oobCode,
+        errorMessage: '',
+        showSuccessMessage: false,
+        password: '',
+        retypePassword: ''
+    };
+
+    var onSubmitSubject = new Rx.Subject();
+    var onPasswordChangeSubject = new Rx.Subject();
+    var onRetypePasswordChangeSubject = new Rx.Subject();
+    var onRenderSubject = new Rx.Subject();
+
+    var ResetPasswordViewController = function ResetPasswordViewController() {
+        return React.createElement(ResetPasswordView, {
+            onSubmit: function onSubmit(e) {
+                return onSubmitSubject.onNext(e);
+            },
+            error: props.errorMessage,
+            success: props.showSuccessMessage,
+            onPasswordChange: function onPasswordChange(e) {
+                return onPasswordChangeSubject.onNext(e);
+            },
+            onRetypePasswordChange: function onRetypePasswordChange(e) {
+                return onRetypePasswordChangeSubject.onNext(e);
+            }
+        });
+    };
+
+    Rx.Observable.just('Render').flatMap(function () {
+        return Rx.Observable.merge([Rx.Observable.just('Initial load'), onRenderSubject]);
+    }).tapOnNext(function () {
+        ReactDOM.render(React.createElement(ResetPasswordViewController, props), $container);
+    }).subscribe();
+
+    Rx.Observable.just('Password changed').flatMap(function () {
+        return onPasswordChangeSubject;
+    }).tapOnNext(function (e) {
+        props.password = e.target.value;
+    }).subscribe();
+
+    Rx.Observable.just('Retype password changed').flatMap(function () {
+        return onRetypePasswordChangeSubject;
+    }).tapOnNext(function (e) {
+        props.retypePassword = e.target.value;
+    }).subscribe();
+
+    Rx.Observable.just('Login form send').flatMap(function () {
+        return onSubmitSubject;
+    }).tapOnNext(function (event) {
+        event.preventDefault();
+    }).subscribe(function (values) {
+        Rx.Observable.just('Validate form and reset').flatMap(function () {
+            return props.password === props.retypePassword ? Rx.Observable.just('Passwords match') : Rx.Observable.throw(new Error('Passwords do not match'));
+        }).tapOnNext(function () {
+            props.errorMessage = '';
+            onRenderSubject.onNext();
+        }).flatMap(function () {
+            return Rx.Observable.fromPromise(firebaseAuth().confirmPasswordReset(props.oobCode, props.password));
+        }).subscribe(function () {
+            props.showSuccessMessage = true;
+            onRenderSubject.onNext();
+        }, function (error) {
+            props.errorMessage = error.message;
+            onRenderSubject.onNext();
+        });
+    });
+};
+
+
+},{"../views/reset-password-view.js":196,"firebase/auth":2,"react":175,"react-dom":6,"rx":176,"url-parse":177}],192:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var LoggedOutFormView = require('./logged-out-form-view.js');
+var FormEmailInput = require('../components/form-email-input.js');
+var FormPasswordInput = require('../components/form-password-input.js');
+
+var CreateAccountView = function CreateAccountView(props) {
+    return React.createElement(
+        LoggedOutFormView,
+        {
+            title: 'Create an account',
+            submitButtonTitle: 'Sign up for Free!',
+            buttonColor: 'green',
+            onSubmit: props.onSubmit,
+            error: props.error
+        },
+        React.createElement(FormEmailInput, {
+            onChange: props.onEmailChange
+        }),
+        React.createElement(FormPasswordInput, {
+            onChange: props.onPasswordChange
+        }),
+        React.createElement(FormPasswordInput, {
+            label: 'Retype password',
+            id: 'retype_password',
+            onChange: props.onRetypePasswordChange
+        })
+    );
+};
 
 module.exports = CreateAccountView;
 
 
-},{"../components/button.js":182,"../firebase-app.js":183,"firebase/auth":2,"react":175,"rx":176}],186:[function(require,module,exports){
+},{"../components/form-email-input.js":183,"../components/form-password-input.js":185,"./logged-out-form-view.js":194,"react":175}],193:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
-var Button = require('../components/button.js');
-var Rx = require('rx');
-var firebaseAuth = require('firebase/auth');
-var firebaseApp = require('../firebase-app.js');
+var LoggedOutFormView = require('./logged-out-form-view.js');
+var FormEmailInput = require('../components/form-email-input.js');
 
-module.exports = React.createClass({
-    displayName: 'exports',
+var ForgotPasswordView = function ForgotPasswordView(props) {
+    return React.createElement(
+        LoggedOutFormView,
+        {
+            submitButtonTitle: 'Send password reset email',
+            title: 'Password reset',
+            onSubmit: props.onSubmit,
+            error: props.error,
+            success: props.success && "Password reset link sent to your email"
+        },
+        React.createElement(FormEmailInput, {
+            onChange: props.onEmailChange
+        })
+    );
+};
 
-    getInitialState: function getInitialState() {
+module.exports = ForgotPasswordView;
+/*
+React.createClass({
+    getInitialState: function() {
         return { email: '', isSending: false, showError: false, showSuccess: false };
     },
-    handleEmailChange: function handleEmailChange(e) {
+    handleEmailChange: function(e) {
         this.setState({ email: e.target.value });
     },
-    handleSubmit: function handleSubmit(e) {
-        var _this = this;
-
+    handleSubmit: function(e) {
         e.preventDefault();
         this.setState({ showError: false });
-
+        
         var email = this.state.email.trim();
         if (!email) {
             this.setState({ showError: true });
             return;
         }
-
-        Rx.Observable.just('Try sending password reset').tapOnNext(function () {
-            _this.setState({ isSending: true, showError: false });
-        }).flatMap(function () {
-            return Rx.Observable.fromPromise(firebaseAuth().sendPasswordResetEmail(email));
-        }).subscribe(function (x) {
-            _this.setState({ isSending: false, showSuccess: true });
-        }, function (err) {
-            _this.setState({ isSending: false, showError: true });
-        });
+        
+        Rx.Observable.just('Try sending password reset')
+            .tapOnNext(() => {
+                this.setState({ isSending: true, showError: false });
+            })
+            .flatMap(() => {
+                return Rx.Observable.fromPromise(
+                    firebaseAuth().sendPasswordResetEmail(email)
+                );
+            })
+            .subscribe(
+                (x) => {
+                    this.setState({ isSending: false, showSuccess: true });
+                },
+                (err) => {
+                    this.setState({ isSending: false, showError: true });
+                }
+            );
+        
+        
     },
-    render: function render() {
-        return React.createElement(
-            'form',
-            { onSubmit: this.handleSubmit },
-            React.createElement(
-                'h2',
-                null,
-                'Password reset'
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    'label',
-                    { htmlFor: 'email' },
-                    'Email address'
-                ),
-                React.createElement('input', {
-                    type: 'email',
-                    name: 'email',
-                    id: 'email',
-                    placeholder: 'john.doe@mailinator.com',
-                    value: this.state.email,
-                    onChange: this.handleEmailChange
-                })
-            ),
-            this.state.showError && React.createElement(
-                'p',
-                { className: 'error' },
-                'There is no user with this email'
-            ),
-            this.state.showSuccess && React.createElement(
-                'p',
-                { className: 'success' },
-                'Password reset link sent to your email'
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    Button,
-                    { color: 'yellow', type: 'submit', disabled: this.state.isSending },
-                    'Send password reset email'
-                )
-            )
-        );
+    render: function() {
+        return (
+            <form onSubmit={ this.handleSubmit }>
+                <h2>Password reset</h2>
+                <p>
+                    <label htmlFor="email">Email address</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="john.doe@mailinator.com"
+                        value={ this.state.email }
+                        onChange={ this.handleEmailChange }
+                    />
+                </p>
+                { this.state.showError &&
+                    <p className="error">{ `There is no user with this email` }</p>
+                }
+                { this.state.showSuccess &&
+                    <p className="success">{ `Password reset link sent to your email` }</p>
+                }
+                <p>
+                    <Button color="yellow" type="submit" disabled={ this.state.isSending }>Send password reset email</Button>
+                </p>
+            </form>
+        )
     }
 });
+*/
 
 
-},{"../components/button.js":182,"../firebase-app.js":183,"firebase/auth":2,"react":175,"rx":176}],187:[function(require,module,exports){
+},{"../components/form-email-input.js":183,"./logged-out-form-view.js":194,"react":175}],194:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
 var Button = require('../components/button.js');
-var Rx = require('rx');
-var firebaseAuth = require('firebase/auth');
-var firebaseApp = require('../firebase-app.js');
 
-module.exports = React.createClass({
-    displayName: 'exports',
+var LoggedOutFormView = function LoggedOutFormView(props) {
+    return React.createElement(
+        'form',
+        { onSubmit: props.onSubmit },
+        props.title && React.createElement(
+            'h2',
+            null,
+            props.title
+        ),
+        props.children,
+        props.error && React.createElement(
+            'p',
+            { className: 'error' },
+            props.error
+        ),
+        props.success && React.createElement(
+            'p',
+            { className: 'success' },
+            props.success
+        ),
+        React.createElement(
+            'p',
+            null,
+            React.createElement(
+                Button,
+                { color: props.buttonColor || 'yellow', type: 'submit' },
+                props.submitButtonTitle
+            )
+        ),
+        React.createElement(
+            'p',
+            { className: 'footer-links' },
+            props.links
+        )
+    );
+};
 
-    getInitialState: function getInitialState() {
-        return { email: '', password: '', isSending: false, showError: false };
-    },
-    handleEmailChange: function handleEmailChange(e) {
-        this.setState({ email: e.target.value, showError: false });
-    },
-    handlePasswordChange: function handlePasswordChange(e) {
-        this.setState({ password: e.target.value, showError: false });
-    },
-    handleSubmit: function handleSubmit(e) {
-        var _this = this;
+module.exports = LoggedOutFormView;
 
-        e.preventDefault();
-        this.setState({ showError: false });
 
-        var email = this.state.email.trim();
-        var password = this.state.password;
-        if (!email || !password) {
-            this.setState({ showError: 'Email or password missing' });
-            return;
-        }
+},{"../components/button.js":182,"react":175}],195:[function(require,module,exports){
+'use strict';
 
-        Rx.Observable.just('Try signing in').tapOnNext(function () {
-            _this.setState({ isSending: true, showError: false });
-        }).flatMap(function () {
-            return Rx.Observable.fromPromise(firebaseAuth().signInWithEmailAndPassword(email, password));
-        }).subscribe(function (x) {
-            document.location.hash = '#/login/';
-        }, function (err) {
-            _this.setState({ isSending: false, showError: 'Email and password didn\'t match' });
-        });
-    },
-    render: function render() {
-        return React.createElement(
-            'form',
-            { onSubmit: this.handleSubmit },
-            React.createElement(
-                'h2',
-                null,
-                'Log in'
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    'label',
-                    { htmlFor: 'email' },
-                    'Email address'
-                ),
-                React.createElement('input', {
-                    type: 'email',
-                    name: 'email',
-                    id: 'email',
-                    placeholder: 'john.doe@mailinator.com',
-                    value: this.state.email,
-                    onChange: this.handleEmailChange
-                })
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    'label',
-                    { htmlFor: 'password' },
-                    'Password'
-                ),
-                React.createElement('input', {
-                    type: 'password',
-                    name: 'password',
-                    id: 'password',
-                    value: this.state.password,
-                    onChange: this.handlePasswordChange
-                })
-            ),
-            this.state.showError && React.createElement(
-                'p',
-                { className: 'error' },
-                this.state.showError
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    Button,
-                    { color: 'yellow', type: 'submit', disabled: this.state.isSending },
-                    'Log in!'
-                )
-            ),
-            React.createElement(
+var React = require('react');
+var LoggedOutFormView = require('./logged-out-form-view.js');
+var FormEmailInput = require('../components/form-email-input.js');
+var FormPasswordInput = require('../components/form-password-input.js');
+
+var LoginView = function LoginView(props) {
+    return React.createElement(
+        LoggedOutFormView,
+        {
+            title: 'Log in',
+            submitButtonTitle: 'Log in!',
+            onSubmit: props.onSubmit,
+            error: props.error,
+            links: [React.createElement(
                 'a',
                 { href: '#/forgot-password/' },
                 'Forgot password?'
-            ),
-            React.createElement('br', null),
-            React.createElement(
+            ), React.createElement(
                 'a',
                 { href: '#/create-account/' },
                 'Create an account'
-            )
-        );
-    }
-});
+            )]
+        },
+        React.createElement(FormEmailInput, {
+            onChange: props.onEmailChange
+        }),
+        React.createElement(FormPasswordInput, {
+            onChange: props.onPasswordChange
+        })
+    );
+};
+
+module.exports = LoginView;
 
 
-},{"../components/button.js":182,"../firebase-app.js":183,"firebase/auth":2,"react":175,"rx":176}],188:[function(require,module,exports){
+},{"../components/form-email-input.js":183,"../components/form-password-input.js":185,"./logged-out-form-view.js":194,"react":175}],196:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
-var Button = require('../components/button.js');
-var Rx = require('rx');
-var firebaseAuth = require('firebase/auth');
-var firebaseApp = require('../firebase-app.js');
-var URL = require('url-parse');
+var LoggedOutFormView = require('./logged-out-form-view.js');
+var FormPasswordInput = require('../components/form-password-input.js');
 
-module.exports = React.createClass({
-    displayName: 'exports',
-
-    getInitialState: function getInitialState() {
-        var url = new URL(window.location.hash.substr(1), true);
-        return {
-            oobCode: url.query.oobCode,
-            password: '',
-            retypePassword: '',
-            isSending: false,
-            showError: false
-        };
-    },
-    handlePasswordChange: function handlePasswordChange(e) {
-        this.setState({ password: e.target.value });
-    },
-    handleRetypePasswordChange: function handleRetypePasswordChange(e) {
-        this.setState({ retypePassword: e.target.value });
-    },
-    handleSubmit: function handleSubmit(e) {
-        var _this = this;
-
-        e.preventDefault();
-        this.setState({ showError: false });
-
-        var password = this.state.password;
-        var retypePassword = this.state.retypePassword;
-        var oobCode = this.state.oobCode;
-        if (password !== retypePassword) {
-            this.setState({ showError: 'Passwords don\'t match' });
-            return;
-        }
-
-        Rx.Observable.just('Try reset the password').tapOnNext(function () {
-            _this.setState({ isSending: true, showError: false });
-        }).flatMap(function () {
-            return Rx.Observable.fromPromise(firebaseAuth().confirmPasswordReset(oobCode, password));
-        }).subscribe(function (x) {
-            _this.setState({ isSending: false, showSuccess: true });
-        }, function (err) {
-            _this.setState({ isSending: false, showError: err.message });
-        });
-    },
-    render: function render() {
-
-        if (!this.state.oobCode) {
-            document.location.hash = '#/';
-        }
-
-        return React.createElement(
-            'form',
-            { onSubmit: this.handleSubmit },
-            React.createElement(
-                'h2',
+var ResetPasswordView = function ResetPasswordView(props) {
+    return React.createElement(
+        LoggedOutFormView,
+        {
+            submitButtonTitle: 'Reset password',
+            title: 'Password reset',
+            onSubmit: props.onSubmit,
+            error: props.error,
+            success: props.success && React.createElement(
+                'span',
                 null,
-                'Password reset'
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    'label',
-                    { htmlFor: 'password' },
-                    'New password'
-                ),
-                React.createElement('input', {
-                    type: 'password',
-                    name: 'password',
-                    id: 'password',
-                    value: this.state.password,
-                    onChange: this.handlePasswordChange
-                })
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    'label',
-                    { htmlFor: 'retype_password' },
-                    'Retype password'
-                ),
-                React.createElement('input', {
-                    type: 'password',
-                    name: 'retype_password',
-                    id: 'retype_password',
-                    value: this.state.retypePassword,
-                    onChange: this.handleRetypePasswordChange
-                })
-            ),
-            this.state.showError && React.createElement(
-                'p',
-                { className: 'error' },
-                this.state.showError
-            ),
-            this.state.showSuccess && React.createElement(
-                'p',
-                { className: 'success' },
                 'Password changed succesfully!',
                 React.createElement('br', null),
                 React.createElement(
@@ -34159,19 +34296,21 @@ module.exports = React.createClass({
                     { href: '#/' },
                     'Log in with the new password'
                 )
-            ),
-            React.createElement(
-                'p',
-                null,
-                React.createElement(
-                    Button,
-                    { color: 'yellow', type: 'submit', disabled: this.state.isSending },
-                    'Reset password'
-                )
             )
-        );
-    }
-});
+        },
+        React.createElement(FormPasswordInput, {
+            label: 'New password',
+            onChange: props.onPasswordChange
+        }),
+        React.createElement(FormPasswordInput, {
+            label: 'Retype password',
+            id: 'retype_password',
+            onChange: props.onRetypePasswordChange
+        })
+    );
+};
+
+module.exports = ResetPasswordView;
 
 
-},{"../components/button.js":182,"../firebase-app.js":183,"firebase/auth":2,"react":175,"rx":176,"url-parse":177}]},{},[181]);
+},{"../components/form-password-input.js":185,"./logged-out-form-view.js":194,"react":175}]},{},[181]);
