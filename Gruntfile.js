@@ -123,11 +123,30 @@ module.exports = function(grunt) {
                 currentRemote: 'github'
             },
             src: ['**']
+        },
+        uglify: {
+            deploy: {
+                files: {
+                    'dist/js/app.js': ['dist/js/app.js']
+                }
+            }
+        },
+        cssmin: {
+            deploy: {
+                files: [{
+                    expand: true,
+                    cwd: 'dist/css/',
+                    src: ['*.css'],
+                    dest: 'dist/css/'
+                }]
+            }
         }
     });
     
     grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -145,5 +164,5 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['build', 'connect', 'open', 'watch']);
     
     grunt.registerTask('deploy', ['build', 'build:deploy', 'gh-pages']);
-    grunt.registerTask('build:deploy', ['imagemin:hard']);
+    grunt.registerTask('build:deploy', ['imagemin:hard', 'uglify', 'cssmin']);
 };
