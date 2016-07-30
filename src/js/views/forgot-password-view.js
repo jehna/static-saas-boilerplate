@@ -1,10 +1,27 @@
 var React = require('react');
-var Button = require('../components/button.js');
 var Rx = require('rx');
 var firebaseAuth = require('firebase/auth');
 var firebaseApp = require('../firebase-app.js');
+var LoggedOutFormView = require('./logged-out-form-view.js');
+var FormEmailInput = require('../components/form-email-input.js');
 
-module.exports = React.createClass({
+const ForgotPasswordView = props => (
+    <LoggedOutFormView
+        submitButtonTitle="Send password reset email"
+        title="Password reset"
+        onSubmit={ props.onSubmit }
+        error={ props.error }
+        success={ props.success && "Password reset link sent to your email" }
+        >
+        <FormEmailInput
+            onChange={ props.onEmailChange }
+            />
+    </LoggedOutFormView>
+);
+
+module.exports = ForgotPasswordView;
+/*
+React.createClass({
     getInitialState: function() {
         return { email: '', isSending: false, showError: false, showSuccess: false };
     },
@@ -69,3 +86,4 @@ module.exports = React.createClass({
         )
     }
 });
+*/

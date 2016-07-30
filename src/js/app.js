@@ -3,7 +3,7 @@ var ReactDOM = require('react-dom');
 var Rx = require('rx');
 var LoginView = require('./views/login-view.js');
 var CreateAccountView = require('./views/create-account-view.js');
-var ForgotPasswordView = require('./views/forgot-password-view.js');
+var ForgotPasswordViewController = require('./view-controllers/forgot-password-view-controller.js');
 var ResetPasswordView = require('./views/reset-password-view.js');
 var URL = require('url-parse');
 var fireabse = require('firebase/app');
@@ -75,7 +75,7 @@ Rx.Observable.just('Routing')
                 case '/create-account/':
                     return [<CreateAccountView />, 'Create new account', 'login-bg'];
                 case '/forgot-password/':
-                    return [<ForgotPasswordView />, 'Forgot password', 'login-bg'];
+                    return [ForgotPasswordViewController, 'Forgot password', 'login-bg'];
                 case '/reset-password/':
                     return [<ResetPasswordView />, 'Reset password', 'login-bg'];
                 case '/':
@@ -85,12 +85,9 @@ Rx.Observable.just('Routing')
             }
         }
     })
-    .tapOnNext(([view]) => {
+    .tapOnNext(([viewController]) => {
         // Render view
-        ReactDOM.render(
-            view,
-            document.getElementsByTagName('main')[0]
-        )
+        viewController(document.getElementsByTagName('main')[0]);
     })
     .tapOnNext(([view, title, customBodyClass]) => {
         document.title = title ? `${title} - ${defaultTitle}` : defaultTitle;
