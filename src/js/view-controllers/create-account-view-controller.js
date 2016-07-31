@@ -11,7 +11,7 @@ module.exports = ($container) => {
         email: '',
         password: '',
         retypePassword: ''
-    }
+    };
     
     let onSubmitSubject = new Rx.Subject();
     let onEmailChangeSubject = new Rx.Subject();
@@ -101,4 +101,4 @@ module.exports = ($container) => {
                     }
                 );
         });
-}
+};

@@ -24,6 +24,6 @@ const ResetPasswordView = props => (
             onChange={ props.onRetypePasswordChange }
             />
     </LoggedOutFormView>
-)
+);
 
 module.exports = ResetPasswordView;

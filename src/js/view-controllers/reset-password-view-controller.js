@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Rx = require('rx');
-var URL = require('url-parse')
+var URL = require('url-parse');
 var ResetPasswordView = require('../views/reset-password-view.js');
 var firebaseAuth = require('firebase/auth');
 
@@ -15,7 +15,7 @@ module.exports = ($container) => {
         showSuccessMessage: false,
         password: '',
         retypePassword: '',
-    }
+    };
     
     let onSubmitSubject = new Rx.Subject();
     let onPasswordChangeSubject = new Rx.Subject();
@@ -93,4 +93,4 @@ module.exports = ($container) => {
                     }
                 );
         });
-}
+};

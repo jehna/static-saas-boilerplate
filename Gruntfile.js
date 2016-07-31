@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         jshint: {
-            all: ['Gruntfile.js'/*, 'src/js/**'*/]
+            all: ['Gruntfile.js']
         },
         watch: {
             scripts: {
@@ -140,6 +140,9 @@ module.exports = function(grunt) {
                     dest: 'dist/css/'
                 }]
             }
+        },
+        eslint: {
+            target: ['src/js/*.js', 'src/js/**/*.js']
         }
     });
     
@@ -153,11 +156,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-gh-pages');
+    grunt.loadNpmTasks('grunt-eslint');
     grunt.loadNpmTasks('grunt-babel');
     grunt.loadNpmTasks('grunt-open');
     
     grunt.registerTask('build', ['build:scripts', 'build:styles', 'build:html', 'build:img']);
-    grunt.registerTask('build:scripts', ['jshint', 'babel', 'browserify']);
+    grunt.registerTask('build:scripts', ['jshint', 'eslint', 'babel', 'browserify']);
     grunt.registerTask('build:styles', ['sass']);
     grunt.registerTask('build:html', ['copy:html']);
     grunt.registerTask('build:img', ['imagemin:light']);

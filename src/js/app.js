@@ -13,14 +13,14 @@ var defaultTitle = document.title;
 const RedirectViewController = (to) => {
     return () => {
         document.location = to;
-    }
+    };
 };
 
 const SignOutViewController = () => {
     Rx.Observable.just('Sign out')
         .flatMap(() => Rx.Observable.fromPromise(firebase.auth().signOut()))
         .subscribe(() => { document.location = '#/'; });
-}
+};
 
 const LoggedInViewController = ($container) => {
     ReactDOM.render(
@@ -42,13 +42,13 @@ Rx.Observable.just('Routing')
                 observer.onNext(user);
                 observer.onCompleted();
             });
-        })
+        });
     })
     .flatMap(() => {
         return Rx.Observable.merge([
             Rx.Observable.just('initial load'),
             Rx.Observable.fromEvent(window, 'hashchange')
-        ])
+        ]);
     })
     .map(() => document.location.hash || '' )
     .map((hash) => {

@@ -10,7 +10,7 @@ module.exports = ($container) => {
         errorMessage: '',
         showSuccessMessage: false,
         email: ''
-    }
+    };
     
     let onSubmitSubject = new Rx.Subject();
     let onEmailChangeSubject = new Rx.Subject();
@@ -80,4 +80,4 @@ module.exports = ($container) => {
                     }
                 );
         });
-}
+};

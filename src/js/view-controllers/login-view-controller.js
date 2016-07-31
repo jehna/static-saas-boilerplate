@@ -10,7 +10,7 @@ module.exports = ($container) => {
         errorMessage: '',
         email: '',
         password: ''
-    }
+    };
     
     let onSubmitSubject = new Rx.Subject();
     let onEmailChangeSubject = new Rx.Subject();
@@ -86,4 +86,4 @@ module.exports = ($container) => {
                     }
                 );
         });
-}
+};
